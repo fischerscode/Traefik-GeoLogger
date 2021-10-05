@@ -47,7 +47,7 @@ class Logger {
         .asyncMap(jsonDecode)
         .asyncMap((access) async {
           (access as Map<String, dynamic>)['geolocation'] =
-              await database.search((access)['ClientHost']);
+              (await database.search((access)['ClientHost'])) ?? {};
           return access;
         })
         .map(jsonEncode)
