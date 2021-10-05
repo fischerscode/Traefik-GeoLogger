@@ -43,6 +43,11 @@ class RunCommand extends Command<int> {
           logfile: File(argResults!['accessFile']));
     }
 
+    while (!await logger.logfile.exists()) {
+      stderr.writeln('${logger.logfile.path} does not exist! Sleep 200ms...');
+      await Future.delayed(Duration(milliseconds: 200));
+    }
+
     await logger.start();
     return 1;
   }
