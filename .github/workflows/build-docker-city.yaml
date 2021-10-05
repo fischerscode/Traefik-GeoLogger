@@ -5,7 +5,7 @@ on:
     types:
       - published
   schedule:
-    - cron: "0 20 0 0 0"
+    - cron: "0 20 * * *"
 
 jobs:
   test:
