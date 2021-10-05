@@ -9,7 +9,7 @@ environment:
 dependencies:
   args: ^2.3.0
   dart_geohash: ^2.0.1
-  maxminddb: ^1.0.0
+  maxminddb: ^1.1.0
   version: ^2.0.0
 
 dev_dependencies:
