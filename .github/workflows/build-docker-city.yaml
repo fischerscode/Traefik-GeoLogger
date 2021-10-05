@@ -58,4 +58,4 @@ jobs:
           pull: true
           push: true
           tags: fischerscode/traefik-geologger-city:${{ steps.release.outputs.release }}-${{ steps.download.outputs.build }}
-          platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
+          platforms: linux/amd64 #,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
