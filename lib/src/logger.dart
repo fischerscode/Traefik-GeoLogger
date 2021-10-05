@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:dart_geohash/dart_geohash.dart';
 import 'package:maxminddb/maxminddb.dart';
 
 class Logger {
@@ -48,6 +49,19 @@ class Logger {
         .asyncMap((access) async {
           (access as Map<String, dynamic>)['geolocation'] =
               (await database.search((access)['ClientHost'])) ?? {};
+          return access;
+        })
+        .map((access) {
+          final double? latitude =
+              access['geolocation']['location']?['latitude'];
+          final double? longitude =
+              access['geolocation']['location']?['longitude'];
+
+          if (latitude != null && longitude != null) {
+            final geoHasher = GeoHasher();
+            access['geolocation']['location']['geohash'] =
+                geoHasher.encode(longitude, latitude);
+          }
           return access;
         })
         .map(jsonEncode)
