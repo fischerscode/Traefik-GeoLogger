@@ -17,9 +17,7 @@ RUN dart compile exe bin/docker.dart -o bin/geologger
 # libraries and configuration files stored in `/runtime/` from the build stage.
 FROM scratch
 COPY --from=build /runtime/ /
-COPY --from=build /app/bin/geologger /app/bin/
 COPY GeoLite2-City.mmdb /app/
-
-ENV PATH /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+COPY --from=build /app/bin/geologger /app/bin/
 
 CMD ["/app/bin/geologger"]
