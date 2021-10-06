@@ -49,6 +49,7 @@ jobs:
           mv $(ls -d -- GeoLite2-City_[0-9]*)/GeoLite2-City.mmdb ./
           echo "::set-output name=build::$(ls -d -- GeoLite2-City_[0-9]* | sed -e 's/GeoLite2-City_//g')"
           rm -r GeoLite2-City_*
+          pwd
           ls
 
       - name: Build and push
