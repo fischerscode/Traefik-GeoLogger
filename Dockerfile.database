@@ -19,7 +19,7 @@ FROM scratch
 COPY --from=build /runtime/ /
 COPY --from=build /app/bin/geologger /app/bin/
 COPY entrypoint.sh /
-COPY *.mmdb /app/
+COPY GeoLite2-City.mmdb /app/
 
 ENV PATH /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
