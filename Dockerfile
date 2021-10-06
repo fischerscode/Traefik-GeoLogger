@@ -17,6 +17,4 @@ FROM scratch
 COPY --from=build /runtime/ /
 COPY --from=build /app/bin/geologger /app/bin/
 
-ENV PATH /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-
 CMD ["/app/bin/geologger"]
