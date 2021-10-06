@@ -13,11 +13,13 @@ COPY . .
 RUN dart pub get --offline
 RUN dart compile exe bin/docker.dart -o bin/geologger
 
+COPY *.mmdb /app/
+
 # Build minimal serving image from AOT-compiled `/server` and required system
 # libraries and configuration files stored in `/runtime/` from the build stage.
 FROM scratch
 COPY --from=build /runtime/ /
-COPY GeoLite2-City.mmdb /app/
+COPY --from=build /app/*.mmdb /app/
 COPY --from=build /app/bin/geologger /app/bin/
 
 CMD ["/app/bin/geologger"]
