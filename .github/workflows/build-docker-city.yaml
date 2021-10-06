@@ -4,6 +4,7 @@ on:
   release:
     types:
       - published
+      - edited
   schedule:
     - cron: "0 20 * * *"
 
