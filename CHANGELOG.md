@@ -1,3 +1,7 @@
+## 1.3.0
+
+- add prometheus metrics
+
 ## 1.2.0
 
 - add privateClientAddress

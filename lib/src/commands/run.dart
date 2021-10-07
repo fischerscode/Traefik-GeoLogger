@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
+import 'package:prometheus_client/runtime_metrics.dart' as runtime_metrics;
 
 import '../logger.dart';
 
@@ -27,20 +28,43 @@ class RunCommand extends Command<int> {
         abbr: 'm',
         defaultsTo: false,
         negatable: true,
+      )
+      ..addFlag(
+        'metrics',
+        defaultsTo: false,
+        negatable: true,
+      )
+      ..addOption(
+        'metrics-port',
+        abbr: 'p',
+        defaultsTo: '8080',
       );
   }
 
   @override
   Future<int> run() async {
     late Logger logger;
+    final logfile = File(argResults!['accessFile']);
+    final enableMetrics = argResults!['metrics'];
+    final metricsPort = int.parse(argResults!['metrics-port']);
     if (argResults!['memory']) {
       logger = await Logger.memory(
-          database: File(argResults!['dataBaseFile']).readAsBytesSync(),
-          logfile: File(argResults!['accessFile']));
+        database: File(argResults!['dataBaseFile']).readAsBytesSync(),
+        logfile: logfile,
+        enableMetrics: enableMetrics,
+        metricsPort: metricsPort,
+      );
     } else {
       logger = await Logger.file(
-          database: File(argResults!['dataBaseFile']),
-          logfile: File(argResults!['accessFile']));
+        database: File(argResults!['dataBaseFile']),
+        logfile: logfile,
+        enableMetrics: enableMetrics,
+        metricsPort: metricsPort,
+      );
+    }
+
+    if (enableMetrics) {
+      runtime_metrics.register();
     }
 
     while (!await logger.logfile.exists()) {
