@@ -44,7 +44,7 @@ jobs:
         with:
           images: fischerscode/traefik-geologger-city
           tags: |
-            type=semver,pattern=v{{version}}_${{ steps.download.outputs.build }}
+            type=semver,prefix=v,pattern={{version}},suffix=_${{ steps.download.outputs.build }}
 
       - name: Build and push
         id: docker_build
