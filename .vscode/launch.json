@@ -5,7 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Traefik-GeoLocationLogger",
+            "name": "bin/geologger",
+            "request": "launch",
+            "type": "dart",
+            "program": "bin/geologger.dart",
+            "args": [
+                "run",
+                "-f",
+                "access.log",
+            ]
+        },
+        {
+            "name": "bin/docker",
             "request": "launch",
             "type": "dart",
             "program": "bin/docker.dart",
