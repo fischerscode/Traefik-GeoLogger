@@ -51,7 +51,7 @@ jobs:
         with:
           images: fischerscode/traefik-geologger-city
           tags: |
-            type=raw,value=${{ steps.release.outputs.release }}-${{ steps.download.outputs.build }}
+            type=raw,value=${{ steps.release.outputs.release }}+${{ steps.download.outputs.build }}
 
       - name: Build and push
         id: docker_build
@@ -60,5 +60,5 @@ jobs:
           context: .
           file: Dockerfile.database
           push: true
-          tags: fischerscode/traefik-geologger-city:${{ steps.release.outputs.release }}-${{ steps.download.outputs.build }}
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
