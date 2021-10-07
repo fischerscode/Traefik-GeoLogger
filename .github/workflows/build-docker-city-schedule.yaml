@@ -1,10 +1,8 @@
-name: Build Docker with Database
+name: Build Docker with Database Daily
 
 on:
-  release:
-    types:
-      - published
-      - edited
+  schedule:
+    - cron: "0 20 * * *"
 
 jobs:
   test:
@@ -18,7 +16,16 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
+      - id: release
+        uses: pozetroninc/github-action-get-latest-release@v0.5.0
+        with:
+          owner: fischerscode
+          repo: Traefik-GeoLogger
+          excludes: prerelease, draft
+
       - uses: actions/checkout@v2.3.4
+        with:
+          ref: ${{ steps.release.outputs.release }}
 
       - name: Login to Docker Hub
         uses: docker/login-action@v1.10.0
@@ -44,7 +51,7 @@ jobs:
         with:
           images: fischerscode/traefik-geologger-city
           tags: |
-            type=semver,pattern=v{{version}}-${{ steps.download.outputs.build }}
+            type=raw,value=${{ steps.release.outputs.release }}-${{ steps.download.outputs.build }}
 
       - name: Build and push
         id: docker_build
@@ -53,5 +60,5 @@ jobs:
           context: .
           file: Dockerfile.database
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: fischerscode/traefik-geologger-city:${{ steps.release.outputs.release }}-${{ steps.download.outputs.build }}
           labels: ${{ steps.meta.outputs.labels }}
