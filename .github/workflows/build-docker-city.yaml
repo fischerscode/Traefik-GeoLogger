@@ -25,7 +25,7 @@ jobs:
         with:
           owner: fischerscode
           repo: Traefik-GeoLogger
-          excludes: prerelease, draft
+          excludes: draft
 
       - uses: actions/checkout@v2.3.4
         with:
