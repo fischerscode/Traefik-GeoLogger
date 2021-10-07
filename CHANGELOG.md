@@ -1,3 +1,7 @@
+## 1.3.2
+
+- fix docker env vars
+
 ## 1.3.1
 
 - disable metrics on docker by default

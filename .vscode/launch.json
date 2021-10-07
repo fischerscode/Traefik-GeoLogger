@@ -24,6 +24,7 @@
             "env": {
                 "LOG_FILE": "access.log",
                 "DATABASE_FILE": "GeoLite2-City.mmdb",
+                "ENABLE_METRICS": "true",
             }
         }
     ]

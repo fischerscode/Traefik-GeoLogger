@@ -3,14 +3,15 @@ import 'dart:io';
 import 'geologger.dart' as geologger;
 
 void main() {
+  var envVars = Platform.environment;
   geologger.main([
     'run',
     '-f',
-    '${String.fromEnvironment('LOG_FILE', defaultValue: '/var/log/access.log')}',
+    '${envVars['LOG_FILE'] ?? '/var/log/access.log'}',
     '-d',
-    '${String.fromEnvironment('DATABASE_FILE', defaultValue: '/app/GeoLite2-City.mmdb')}',
-    '--${(bool.fromEnvironment('ENABLE_METRICS', defaultValue: false) ? '' : 'no-')}metrics',
+    '${envVars['DATABASE_FILE'] ?? '/app/GeoLite2-City.mmdb'}',
+    '--${envVars['ENABLE_METRICS']?.toLowerCase() == 'true' ? '' : 'no-'}metrics',
     '-p',
-    '${String.fromEnvironment('METRICS_PORT', defaultValue: '8080')}',
+    '${envVars['METRICS_PORT'] ?? '8080'}',
   ]);
 }
