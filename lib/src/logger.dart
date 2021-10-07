@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:dart_geohash/dart_geohash.dart';
 import 'package:maxminddb/maxminddb.dart';
+import 'package:extendedip/extendedip.dart';
 
 class Logger {
   final MaxMindDatabase database;
@@ -47,8 +48,12 @@ class Logger {
         .transform(LineSplitter())
         .asyncMap(jsonDecode)
         .asyncMap((access) async {
+          final address = InternetAddress(access['ClientHost']);
           (access as Map<String, dynamic>)['geolocation'] =
-              (await database.search((access)['ClientHost'])) ?? {};
+              (await database.searchAddress(address)) ?? {};
+
+          access['privateClientAddress'] = address.isInPrivate;
+
           return access;
         })
         .map((access) {
