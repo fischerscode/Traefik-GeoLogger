@@ -1,3 +1,8 @@
+## 1.3.1
+
+- disable metrics on docker by default
+- add `ENABLE_METRICS` (defaults to false) and `METRICS_PORT` (defaults to 8080) on docker
+
 ## 1.3.0
 
 - add prometheus metrics
