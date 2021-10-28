@@ -46,6 +46,7 @@ jobs:
           tags: |
             type=semver,prefix=v,pattern={{version}}
             type=semver,prefix=v,pattern={{version}},suffix=_${{ steps.download.outputs.build }}
+            type=semver,prefix=v,pattern={{version}},suffix=${{ steps.download.outputs.build }}
 
       - name: Build and push
         id: docker_build
