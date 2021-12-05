@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dart_geohash/dart_geohash.dart';
+import 'package:dcli/dcli.dart';
 import 'package:maxminddb/maxminddb.dart';
 import 'package:extendedip/extendedip.dart';
 import 'package:prometheus_client/format.dart' as format;
@@ -12,8 +12,10 @@ class Logger {
   final MaxMindDatabase database;
   final File logfile;
   final int bufferSize;
-  final int maxLength;
+  final int? maxSize;
   late final prometheus.Counter? _accessCounter;
+  final int? traefikPid;
+  final String? traefikProcessName;
 
   /// Listen the [logfile] and add geo location for 'ClientHost' using the [database].
   /// The file is read with a [bufferSize] bytes large buffer
@@ -24,10 +26,12 @@ class Logger {
     required this.database,
     required this.logfile,
     this.bufferSize = 2048,
-    int maxSize = 10,
+    this.maxSize,
     required bool enableMetrics,
     int? metricsPort,
-  }) : maxLength = maxSize * 1048576 {
+    this.traefikPid,
+    this.traefikProcessName,
+  }) {
     if (enableMetrics) {
       _accessCounter = prometheus.Counter(
           name: 'traefik_geo_access_log_total',
@@ -68,12 +72,18 @@ class Logger {
     required File logfile,
     bool? enableMetrics,
     int? metricsPort,
+    int? maxSize,
+    int? traefikPid,
+    String? traefikProcessName,
   }) async {
     return Logger(
       database: await MaxMindDatabase.file(database),
       logfile: logfile,
       enableMetrics: enableMetrics ?? false,
       metricsPort: metricsPort,
+      maxSize: maxSize,
+      traefikPid: traefikPid,
+      traefikProcessName: traefikProcessName,
     );
   }
 
@@ -82,16 +92,27 @@ class Logger {
     required File logfile,
     bool? enableMetrics,
     int? metricsPort,
+    int? maxSize,
+    int? traefikPid,
+    String? traefikProcessName,
   }) async {
     return Logger(
       database: await MaxMindDatabase.memory(database),
       logfile: logfile,
       enableMetrics: enableMetrics ?? false,
       metricsPort: metricsPort,
+      maxSize: maxSize,
+      traefikPid: traefikPid,
+      traefikProcessName: traefikProcessName,
     );
   }
 
   Future<void> start() async {
+    print('''Starting Logger with:
+    bufferSize: $bufferSize
+    maxSize: $maxSize
+    traefikPid: $traefikPid
+    traefikProcessName: $traefikProcessName''');
     return _read()
         .map(Utf8Decoder().convert)
         .transform(LineSplitter())
@@ -138,12 +159,12 @@ class Logger {
   }
 
   Stream<List<int>> _read() async* {
-    var fileAccess = await logfile.open(mode: FileMode.read);
+    final fileAccess = await logfile.open(mode: FileMode.read);
     var position = 0;
-    var length = await fileAccess.length();
     var buffer = Uint8List(bufferSize);
 
     Stream<Uint8List> _read() async* {
+      var length = await (fileAccess.length());
       while (position < length) {
         final bytesRead = await fileAccess.readInto(buffer);
         position += bytesRead;
@@ -151,11 +172,24 @@ class Logger {
         yield buffer.sublist(0, bytesRead);
       }
 
-      if (position > maxLength) {
-        var oldFile = await logfile.rename('${logfile.path}.old');
-        fileAccess = await (await logfile.create()).open(mode: FileMode.read);
+      // print('position: $length / ${(maxSize ?? 1) * 1048576}');
+      if (maxSize != null && length > maxSize! * 1048576) {
+        await logfile.writeAsBytes([], mode: FileMode.writeOnly, flush: true);
+        final pids;
+        if (traefikPid != null) {
+          pids = [traefikPid];
+        } else if (traefikProcessName != null) {
+          pids = ProcessHelper()
+              .getProcessesByName(traefikProcessName!)
+              .map((e) => e.pid);
+        } else {
+          pids = [];
+        }
+        for (var pid in pids) {
+          Process.killPid(pid, ProcessSignal.sigusr1);
+        }
+        fileAccess.setPositionSync(0);
         position = 0;
-        await oldFile.delete();
       }
     }
 
@@ -164,7 +198,6 @@ class Logger {
 
       await for (final event in logfile.watch(events: FileSystemEvent.modify)) {
         if (event is FileSystemModifyEvent && event.contentChanged) {
-          length = await (fileAccess.length());
           yield* _read();
         }
       }

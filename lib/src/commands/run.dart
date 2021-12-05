@@ -38,6 +38,25 @@ class RunCommand extends Command<int> {
         'metrics-port',
         abbr: 'p',
         defaultsTo: '8080',
+      )
+      ..addOption(
+        'traefik-pid',
+        abbr: 'P',
+        help:
+            'The pid of the traefik process. Used when rotating the log file.',
+      )
+      ..addOption(
+        'traefik-process-name',
+        abbr: 'n',
+        help:
+            'The name of the traefik process. Used when rotating the log file.',
+      )
+      ..addOption(
+        'max-log-size',
+        abbr: 's',
+        help:
+            'The size limit of the log file in MB. When exciding this limit, the file gets rotated.',
+        defaultsTo: '10',
       );
   }
 
@@ -47,12 +66,18 @@ class RunCommand extends Command<int> {
     final logfile = File(argResults!['accessFile']);
     final enableMetrics = argResults!['metrics'];
     final metricsPort = int.parse(argResults!['metrics-port']);
+    final maxLogSize = int.tryParse(argResults!['max-log-size'] ?? '');
+    final pid = int.tryParse(argResults!['traefik-pid'] ?? '');
+    final processName = argResults!['traefik-process-name'];
     if (argResults!['memory']) {
       logger = await Logger.memory(
         database: File(argResults!['dataBaseFile']).readAsBytesSync(),
         logfile: logfile,
         enableMetrics: enableMetrics,
         metricsPort: metricsPort,
+        maxSize: maxLogSize,
+        traefikPid: pid,
+        traefikProcessName: processName,
       );
     } else {
       logger = await Logger.file(
@@ -60,6 +85,9 @@ class RunCommand extends Command<int> {
         logfile: logfile,
         enableMetrics: enableMetrics,
         metricsPort: metricsPort,
+        maxSize: maxLogSize,
+        traefikPid: pid,
+        traefikProcessName: processName,
       );
     }
 

@@ -1,3 +1,7 @@
+## 1.4.0
+
+- send USR1 to traefik on file rotate
+
 ## 1.3.2
 
 - fix docker env vars
