@@ -57,6 +57,11 @@ class RunCommand extends Command<int> {
         help:
             'The size limit of the log file in MB. When exciding this limit, the file gets rotated.',
         defaultsTo: '10',
+      )
+      ..addFlag(
+        'log-access',
+        defaultsTo: true,
+        negatable: true,
       );
   }
 
@@ -69,6 +74,7 @@ class RunCommand extends Command<int> {
     final maxLogSize = int.tryParse(argResults!['max-log-size'] ?? '');
     final pid = int.tryParse(argResults!['traefik-pid'] ?? '');
     final processName = argResults!['traefik-process-name'];
+    final logAccess = argResults!['log-access'];
     if (argResults!['memory']) {
       logger = await Logger.memory(
         database: File(argResults!['dataBaseFile']).readAsBytesSync(),
@@ -78,6 +84,7 @@ class RunCommand extends Command<int> {
         maxSize: maxLogSize,
         traefikPid: pid,
         traefikProcessName: processName,
+        logAccess: logAccess,
       );
     } else {
       logger = await Logger.file(
@@ -88,6 +95,7 @@ class RunCommand extends Command<int> {
         maxSize: maxLogSize,
         traefikPid: pid,
         traefikProcessName: processName,
+        logAccess: logAccess,
       );
     }
 

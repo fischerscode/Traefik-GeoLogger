@@ -16,6 +16,7 @@ class Logger {
   late final prometheus.Counter? _accessCounter;
   final int? traefikPid;
   final String? traefikProcessName;
+  final bool logAccess;
 
   /// Listen the [logfile] and add geo location for 'ClientHost' using the [database].
   /// The file is read with a [bufferSize] bytes large buffer
@@ -31,7 +32,8 @@ class Logger {
     int? metricsPort,
     this.traefikPid,
     this.traefikProcessName,
-  }) {
+    bool? logAccess,
+  }) : logAccess = logAccess ?? true {
     if (enableMetrics) {
       _accessCounter = prometheus.Counter(
           name: 'traefik_geo_access_log_total',
@@ -75,6 +77,7 @@ class Logger {
     int? maxSize,
     int? traefikPid,
     String? traefikProcessName,
+    bool? logAccess,
   }) async {
     return Logger(
       database: await MaxMindDatabase.file(database),
@@ -84,6 +87,7 @@ class Logger {
       maxSize: maxSize,
       traefikPid: traefikPid,
       traefikProcessName: traefikProcessName,
+      logAccess: logAccess,
     );
   }
 
@@ -95,6 +99,7 @@ class Logger {
     int? maxSize,
     int? traefikPid,
     String? traefikProcessName,
+    bool? logAccess,
   }) async {
     return Logger(
       database: await MaxMindDatabase.memory(database),
@@ -104,6 +109,7 @@ class Logger {
       maxSize: maxSize,
       traefikPid: traefikPid,
       traefikProcessName: traefikProcessName,
+      logAccess: logAccess,
     );
   }
 
@@ -112,7 +118,8 @@ class Logger {
     bufferSize: $bufferSize
     maxSize: $maxSize
     traefikPid: $traefikPid
-    traefikProcessName: $traefikProcessName''');
+    traefikProcessName: $traefikProcessName
+    logAccess: $logAccess''');
     return _read()
         .map(Utf8Decoder().convert)
         .transform(LineSplitter())
@@ -154,7 +161,9 @@ class Logger {
         data['geolocation']?['country']?['iso_code'] ?? '',
         data['geolocation']?['continent']?['iso_code'] ?? '',
       ]).inc();
-      print(jsonEncode(data));
+      if (logAccess) {
+        print(jsonEncode(data));
+      }
     });
   }
 

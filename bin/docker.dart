@@ -15,6 +15,7 @@ void main() {
         ${traefikPid != null ? '--traefik-pid $traefikPid' : ''}
         ${traefikProcessName != null ? '--traefik-process-name $traefikProcessName' : ''}
         ${maxLogSize != null ? '--max-log-size $maxLogSize' : ''}
+        --${envVars['LOG_ACCESS']?.toLowerCase() == 'true' ? '' : 'no-'}log-access
     '''
       .replaceAll('\n', ' ')
       .split(' ')

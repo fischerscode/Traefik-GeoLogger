@@ -1,3 +1,7 @@
+## 1.4.1
+
+- add option to disable logging access
+
 ## 1.4.0
 
 - send USR1 to traefik on file rotate

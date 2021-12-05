@@ -18,6 +18,7 @@
                 "1",
                 "--traefik-process-name",
                 "top",
+                "--log-access",
             ]
         },
         {
