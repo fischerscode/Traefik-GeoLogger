@@ -56,12 +56,12 @@ class Logger {
         ..register();
       HttpServer.bind(InternetAddress.anyIPv6, metricsPort ?? 8080)
           .then((server) {
-        server.listen((request) {
+        server.listen((request) async {
           request.response.headers
               .add(HttpHeaders.contentTypeHeader, format.contentType);
           format.write004(
               request.response,
-              prometheus.CollectorRegistry.defaultRegistry
+              await prometheus.CollectorRegistry.defaultRegistry
                   .collectMetricFamilySamples());
           request.response.close();
         });
@@ -184,9 +184,10 @@ class Logger {
       // print('position: $length / ${(maxSize ?? 1) * 1048576}');
       if (maxSize != null && length > maxSize! * 1048576) {
         await logfile.writeAsBytes([], mode: FileMode.writeOnly, flush: true);
-        final pids;
-        if (traefikPid != null) {
-          pids = [traefikPid];
+        final Iterable<int> pids;
+        final pid = traefikPid;
+        if (pid != null) {
+          pids = [pid];
         } else if (traefikProcessName != null) {
           pids = ProcessHelper()
               .getProcessesByName(traefikProcessName!)

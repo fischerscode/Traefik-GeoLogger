@@ -1,3 +1,9 @@
+## 1.4.2
+
+- Update dependencies:
+  - use lint instead of pedantic
+  - update prometheus_client to ^1.0.0
+
 ## 1.4.1
 
 - add option to disable logging access
