@@ -1,6 +1,7 @@
 name: geologger
 description: Add geo locations to the Traefic access log.
 version: 1.4.2
+repository: https://github.com/fischerscode/Traefik-GeoLogger
 # homepage: https://www.example.com
 
 environment:
