@@ -1,3 +1,8 @@
+## 1.5.0
+
+- Add `geologger` as executable
+- Update dependencies:
+
 ## 1.4.2
 
 - Update dependencies:
