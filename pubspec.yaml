@@ -10,9 +10,9 @@ environment:
 dependencies:
   args: ^2.3.0
   dart_geohash: ^2.0.1
-  maxminddb: ">=1.1.0 <2.0.0"
-  extendedip: ">=1.0.0 <2.0.0"
-  version: ^2.0.0
+  maxminddb: ^1.2.0
+  extendedip: ^1.0.0
+  version: ^3.0.2
   prometheus_client: ^1.0.0
   dcli: ^1.14.1
 
