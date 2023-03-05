@@ -23,6 +23,7 @@ jobs:
           owner: fischerscode
           repo: Traefik-GeoLogger
           excludes: prerelease, draft
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/checkout@v3
         with:
