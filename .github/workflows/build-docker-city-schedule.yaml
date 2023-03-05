@@ -53,8 +53,7 @@ jobs:
           images: fischerscode/traefik-geologger-city
           tags: |
             type=raw,value=${{ steps.release.outputs.release }}
-            type=raw,value=${{ steps.release.outputs.release }}_${{ steps.download.outputs.build }}
-            type=raw,value=${{ steps.release.outputs.release }}${{ steps.download.outputs.build }}
+            type=raw,value=${{ steps.release.outputs.release }}+${{ steps.download.outputs.build }}
 
       - name: Build and push
         id: docker_build
