@@ -1,3 +1,8 @@
+## 1.5.1
+
+- Update dependencies
+- migrate to GITHUB_OUTPUT
+
 ## 1.5.0
 
 - Add `geologger` as executable
